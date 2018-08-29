@@ -1,0 +1,123 @@
+﻿'commit_old_code' manual
+Copyright (C) 2016 by Ruslan Garipov.
+
+=======================================================================
+
+------------
+Introduction
+------------
+
+'commit_old_code.sh' script generates a shell script which you can use
+to create git commits.
+
+=======================================================================
+
+-------------
+Prerequisites
+-------------
+
+'commit_old_code.sh' script is a GNU AWK script. Make sure it's
+installed in your system.
+
+=======================================================================
+
+-----------
+Preparation
+-----------
+
+Before you run the the script, you must prepare input file.
+
+Input file is a text file, where each row has the following format:
+
+        date	path	message
+
+date
+        Committing date. This date will be used as commiter date in
+        a git commit object.
+
+path
+        Path to a directory with directories and files for commit.
+
+message
+        Message for git commit object.
+
+Date can be defined using git format, for example, "Tue Jun 14 23:48:48
+2016 +0500", or using general format, for example, "23.02.2016
+03:04:05", "2016/12/31 03:04:05" etc.
+
+Path you specified should contain all file system objects that you want
+to push to a git repository. This can be absolute path, or a relative
+one. When you define a relative path, assume your git repository
+directory as start point -- define path relative to this directory.
+
+If you want to include double quotes in your 'message' text, escape it
+with backward slash (\").
+
+Remember that 'message' will become a commit message. This is an one
+line message, you can't add line ending here. So don't create long text
+here, stick with a short (less than 50 character) message.
+
+All parts of a line must be delimited with one or more tab character.
+
+Lines started with # character is a "comment". Such lines do not
+produce commits.
+
+Example
+-------
+Tue Jun 14 23:48:48 2016 +0500	/~/temp/initial/	The first commit
+#Tue Feb 23 03:04:05 2013 +0500	./temp/		This is a comment line
+23.02.2016 03:04:05	/~/temp/			This is the second commit
+
+-------------
+Orphan branch
+-------------
+
+This script doesn't create a new, orphan git branch for you, therefore
+you should do this yourself, if you need that:
+
+        git checkout --orphan branch_name
+
+This creates 'branch_name', having no parents, and switches to it.
+Issue
+
+        git rm -rf .
+
+to remove all files from the old working tree.
+
+=======================================================================
+
+-----
+Usage
+-----
+
+        commit_old_code.sh {input_file}
+
+By default 'commit_old_code.sh' outputs result onto the stdout. Usually
+you will want to redirect it to a file:
+
+        commit_old_code.sh {input_file} > script.sh
+
+Examine result 'script.sh' and then put it to the root directory of
+your git repository. To avoid appearance of this file in the git index,
+modify your '.gitignore' file and add there a new line with the result
+script ('script.sh' in this sample).
+
+When 'script.sh' you've generated has no errors, run the script:
+
+        cd repository_directory
+        ./script.sh
+
+=======================================================================
+
+----------------
+How does it work
+----------------
+
+Result script ('script.sh' in above sample) sets `GIT_COMMITTER_DATE`
+environment variable, copies all content from a directory you specified
+in an input file, adds changed content to the git stage area and
+creates signed commit object.
+
+`GIT_COMMITTER_DATE` causes `git-commit` to use the specified date as
+committer date. The script doesn't change author date -- it will be a
+date when you run the script.
