@@ -1,5 +1,8 @@
 #! /bin/awk -f
-# Copyright (C) 2016 by Ruslan Garipov.
+# Copyright (c) 2016, Ruslan Garipov.
+# Contacts: <ruslanngaripov@gmail.com>.
+# License: MIT License (https://opensource.org/licenses/MIT).
+# Author: Ruslan Garipov <ruslanngaripov@gmail.com>.
 
 BEGIN { print "#! /bin/sh\n"
 FS = "\t+"
