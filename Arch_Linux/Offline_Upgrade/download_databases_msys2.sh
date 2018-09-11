@@ -1,4 +1,8 @@
 #! /bin/sh
+# Copyright (c) 2018, Ruslan Garipov.
+# Contacts: <ruslanngaripov@gmail.com>.
+# License: MIT License (https://opensource.org/licenses/MIT).
+# Author: Ruslan Garipov <ruslanngaripov@gmail.com>.
 
 date=$(date --utc --rfc-3339=seconds | \
     sed -e "s/\(\+\)00:00/\105:00/; s/ /_/g; s/\:/_/g")

@@ -1,4 +1,8 @@
 #! /bin/sh
+# Copyright (c) 2018, Ruslan Garipov.
+# Contacts: <ruslanngaripov@gmail.com>.
+# License: MIT License (https://opensource.org/licenses/MIT).
+# Author: Ruslan Garipov <ruslanngaripov@gmail.com>.
 
 yarn_lock_file=${1:?"Please specify path to \`\`yarn.lock'' file to \
 extract dependencies from."}
