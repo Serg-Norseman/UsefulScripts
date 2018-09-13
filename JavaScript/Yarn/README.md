@@ -26,8 +26,10 @@ creates it.
 
 ## Requirements
 
-This script currently uses GNU \`\`wget'' tools.
+On [FreeBSD][2] this script uses fetch(1). On other systems it uses GNU
+wget(1).
 
-This script is compatible with `sh(1)` shell.
+This script is compatible with sh(1) shell.
 
-[1]: https://yarnpkg.com/en/docs/yarn-lock
+[1]: https://yarnpkg.com/en/docs/yarn-lock/
+[2]: https://www.FreeBSD.org/
