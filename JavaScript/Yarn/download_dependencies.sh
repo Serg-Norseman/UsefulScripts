@@ -29,9 +29,10 @@ do
   esac
 done
 
-if test -z ${yarn_lock_file}
+if ! test -f ${yarn_lock_file}
 then
-  echo "Please use \`\`-f'' option to specify location of 'yarn.lock' file."
+  echo "Please use \`\`-f'' option to specify location of existing" \
+      "'yarn.lock' file."
   echo "'${0} -h' for more information."
   exit 1
 fi
@@ -57,6 +58,8 @@ then
 s/^ *resolved \{1,\}\"\(.\{1,\}\/\(.\{1,\}\)#.\{1,\}\)\"$/\
 fetch -o ${download_prefix}\2 \1/p" ${yarn_lock_file} | /bin/sh -s
 else
+  download_prefix=$(echo "${download_prefix}" | sed -n -E \
+      -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
   sed -n -e "/^ *resolved /s/^ *resolved \+\"\(.\+\)\"$/\1/p" \
       ${yarn_lock_file} | wget -P ${download_prefix} -v -i -
 fi

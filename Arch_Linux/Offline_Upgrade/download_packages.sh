@@ -4,23 +4,68 @@
 # License: MIT License (https://opensource.org/licenses/MIT).
 # Author: Ruslan Garipov <ruslanngaripov@gmail.com>.
 
-tag=${1:-"undefined"}
-pack_list=${2:-"package_list"}
+PrintUsage()
+{
+  echo "Usage: download_databases.sh [-f <package list file>]"
+  echo "                             [-p <download location>] [-t]"
+  echo "                             [-h]"
+  exit 0;
+}
 
-if test -f ${pack_list}
+if test 0 -eq $#
 then
-date=$(date --utc --rfc-3339=seconds | \
-    sed -e "s/\(\+\)00:00/\105:00/; s/ /_/g; s/\:/_/g")
-download_prefix=./packages/${date}_${tag}
+  PrintUsage
+fi
+while getopts ":hf:p:t" opt
+do
+  case ${opt} in
+    f) package_list_file=${OPTARG};;
+    h) PrintUsage;;
+    p) download_prefix=${OPTARG};;
+    t) date=$(date -u "+%Y-%m-%d_%H_%M_%S_%Z")
+      tag=${date};;
+    \?) echo "\`\`${OPTARG}'' is an unknown option." 1>&2
+      exit 1;;
+    :) echo "\`\`${OPTARG}'' requires an argument." 1>&2
+      exit 1;;
+  esac
+done
+
+if ! test -f ${package_list_file}
+then
+  echo "Please use \`\`-f'' option to specify location of existing package" \
+      "list file."
+  echo "'${0} -h' for more information."
+  exit 1
+fi
+if test -z ${download_prefix}
+then
+  echo "Please use \`\`-p'' option to specify download (target) location."
+  echo "'${0} -h' for more information."
+  exit 1
+elif test -n ${tag}
+then
+  # We have to use extended (modern) regular expressions and not BRE, because we
+  # need branches, and BRE does not have it (``|'').
+  download_prefix=$(echo "${download_prefix}" | sed -n -E \
+      -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2\/${tag}/p")
+fi
+download_prefix=$(echo "${download_prefix}" | sed -n -E \
+    -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
 
 if ! test -e ${download_prefix}
 then
-mkdir --parents ${download_prefix}
+  mkdir -p ${download_prefix}
 fi
 
-echo $(cat ${pack_list} | wc --lines) "file(s) to download".
-wget --directory-prefix=${download_prefix} --verbose \
-    --input-file=${pack_list}
+echo $(cat ${package_list_file} | wc -l | \
+    sed -n -e "s/^ \{0,\}\([0-9]\{1,\}\)$/\1/p") "file(s) to download".
+if test "$(fetch 2>&1 | grep -e 'usage')"
+then
+  download_prefix=$(echo "${download_prefix}" | sed -n -E \
+      -e "s/(\/{1})/\\\\\1/gp")
+  sed -n -e "s/^\(.\{1,\}\)$/\
+fetch -o ${download_prefix} \1/p" ${package_list_file} | /bin/sh -s
 else
-echo "File \`\`${pack_list}'' does not exist."
+  wget -v -P ${download_prefix} -i ${package_list_file}
 fi
