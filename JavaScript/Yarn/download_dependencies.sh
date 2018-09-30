@@ -29,14 +29,14 @@ do
   esac
 done
 
-if ! test -f ${yarn_lock_file}
+if ! test -f "${yarn_lock_file}"
 then
   echo "Please use \`\`-f'' option to specify location of existing" \
       "'yarn.lock' file."
   echo "'${0} -h' for more information."
   exit 1
 fi
-if test -z ${download_prefix}
+if test -z "${download_prefix}"
 then
   echo "Please use \`\`-p'' option to specify download (target) location."
   echo "'${0} -h' for more information."
