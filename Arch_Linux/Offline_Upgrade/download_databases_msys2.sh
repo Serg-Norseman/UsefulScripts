@@ -29,20 +29,33 @@ do
   esac
 done
 
-if test -z ${download_prefix}
+if test -z "${download_prefix}"
 then
   echo "Please use \`\`-p'' option to specify download (target) location."
   echo "'${0} -h' for more information."
   exit 1
-elif test -n ${tag}
+elif test -n "${tag}"
 then
-  # We have to use extended (modern) regular expressions and not BRE, because we
-  # need branches, and BRE does not have it (``|'').
-  download_prefix=$(echo "${download_prefix}" | sed -n -E \
-      -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2\/${tag}/p")
+  if test 1 -lt ${#download_prefix}
+  then
+    # We have to use extended (modern) regular expressions and not BRE, because
+    # we need branches, and BRE does not have it (``|'').
+    download_prefix=$(echo "${download_prefix}" | sed -n -E \
+        -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2\/${tag}/p")
+  else
+    if test "/" != ${download_prefix}
+    then
+      download_prefix=${download_prefix}/${tag}
+    else
+      download_prefix=${download_prefix}${tag}
+    fi
+  fi
 fi
-download_prefix=$(echo "${download_prefix}" | sed -n -E \
-    -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
+if test 1 -lt ${#download_prefix}
+then
+  download_prefix=$(echo "${download_prefix}" | sed -n -E \
+      -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
+fi
 
 if ! test -e ${download_prefix}
 then

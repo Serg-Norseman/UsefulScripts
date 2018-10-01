@@ -31,27 +31,40 @@ do
   esac
 done
 
-if ! test -f ${package_list_file}
+if ! test -f "${package_list_file}"
 then
   echo "Please use \`\`-f'' option to specify location of existing package" \
       "list file."
   echo "'${0} -h' for more information."
   exit 1
 fi
-if test -z ${download_prefix}
+if test -z "${download_prefix}"
 then
   echo "Please use \`\`-p'' option to specify download (target) location."
   echo "'${0} -h' for more information."
   exit 1
-elif test -n ${tag}
+elif test -n "${tag}"
 then
-  # We have to use extended (modern) regular expressions and not BRE, because we
-  # need branches, and BRE does not have it (``|'').
-  download_prefix=$(echo "${download_prefix}" | sed -n -E \
-      -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2\/${tag}/p")
+  if test 1 -lt ${#download_prefix}
+  then
+    # We have to use extended (modern) regular expressions and not BRE, because
+    # we need branches, and BRE does not have it (``|'').
+    download_prefix=$(echo "${download_prefix}" | sed -n -E \
+        -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2\/${tag}/p")
+  else
+    if test "/" != ${download_prefix}
+    then
+      download_prefix=${download_prefix}/${tag}
+    else
+      download_prefix=${download_prefix}${tag}
+    fi
+  fi
 fi
-download_prefix=$(echo "${download_prefix}" | sed -n -E \
-    -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
+if test 1 -lt ${#download_prefix}
+then
+  download_prefix=$(echo "${download_prefix}" | sed -n -E \
+      -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
+fi
 
 if ! test -e ${download_prefix}
 then
@@ -62,8 +75,11 @@ echo $(cat ${package_list_file} | wc -l | \
     sed -n -e "s/^ \{0,\}\([0-9]\{1,\}\)$/\1/p") "file(s) to download".
 if test "$(fetch 2>&1 | grep -e 'usage')"
 then
-  download_prefix=$(echo "${download_prefix}" | sed -n -E \
-      -e "s/(\/{1})/\\\\\1/gp")
+  if test 1 -lt ${#download_prefix}
+  then
+    download_prefix=$(echo "${download_prefix}" | sed -n -E \
+        -e "s/(\/{1})/\\\\\1/gp")
+  fi
   sed -n -e "s/^\(.\{1,\}\)$/\
 fetch -o ${download_prefix} \1/p" ${package_list_file} | /bin/sh -s
 else
