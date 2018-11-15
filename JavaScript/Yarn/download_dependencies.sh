@@ -29,7 +29,7 @@ do
   esac
 done
 
-if ! test -f "${yarn_lock_file}"
+if test ! -f "${yarn_lock_file}"
 then
   echo "Please use \`\`-f'' option to specify location of existing" \
       "'yarn.lock' file."
@@ -43,7 +43,7 @@ then
   exit 1
 fi
 
-if ! test -e ${download_prefix}
+if test ! -e ${download_prefix}
 then
   mkdir -p ${download_prefix}
 fi

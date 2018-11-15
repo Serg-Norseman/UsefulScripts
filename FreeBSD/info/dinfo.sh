@@ -25,7 +25,7 @@ sed -n -e "s/.\{1,\}<td>\
   {
     download_prefix=$(echo ${download_prefix_1}/${chapter_1} | sed -n -E \
         -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
-    if ! test -e ${download_prefix}
+    if test ! -e ${download_prefix}
     then
       mkdir ${download_prefix}
     fi
@@ -45,7 +45,7 @@ sed -n -e "s/.\{1,\}<td>\
   {
     download_prefix=$(echo ${download_prefix_2}/${chapter_2} | sed -n -E \
         -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
-    if ! test -e ${download_prefix}
+    if test ! -e ${download_prefix}
     then
       mkdir ${download_prefix}
     fi
@@ -86,7 +86,7 @@ then
       -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
 fi
 
-if ! test -e ${download_prefix}
+if test ! -e ${download_prefix}
 then
   mkdir -p ${download_prefix}
 fi

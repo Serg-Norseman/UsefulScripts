@@ -57,7 +57,7 @@ then
       -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
 fi
 
-if ! test -e ${download_prefix}
+if test ! -e ${download_prefix}
 then
   mkdir -p ${download_prefix}
 fi
