@@ -6,7 +6,7 @@
 
 PrintUsage()
 {
-  echo "Usage: dinfo.sh [-p <download location>]"
+  echo "Usage: dinfo.sh [-p <download location>] [-z]"
   echo "                [-h]"
   exit 0;
 }
@@ -25,13 +25,21 @@ sed -n -e "s/.\{1,\}<td>\
   {
     download_prefix=$(echo ${download_prefix_1}/${chapter_1} | sed -n -E \
         -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
-    if ! test -e ${download_prefix}
+    if test ! -e ${download_prefix}
     then
       mkdir ${download_prefix}
     fi
     index_page=${index_page_1}${chapter_1}
     book=$(echo ${chapter_1} | sed -n -e "s/\([a-z]\{1,\}\)s\//\1.${format}/p")
     CreateTheSecondLayout
+    # Make tarball if required.
+    if test -n "${mktar}"
+    then
+      trbl=$(echo ${chapter_1} |\
+          sed -n -E -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
+      tar -c --format pax -f - -C ${download_prefix_1} ${trbl} | xz -z -F xz \
+          -C sha256 > ${download_prefix_1}/${trbl}.tar.xz
+    fi
   }
 }
 CreateTheSecondLayout()
@@ -45,7 +53,7 @@ sed -n -e "s/.\{1,\}<td>\
   {
     download_prefix=$(echo ${download_prefix_2}/${chapter_2} | sed -n -E \
         -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
-    if ! test -e ${download_prefix}
+    if test ! -e ${download_prefix}
     then
       mkdir ${download_prefix}
     fi
@@ -62,11 +70,12 @@ if test 0 -eq $#
 then
   PrintUsage
 fi
-while getopts ":hp:" opt
+while getopts ":hp:z" opt
 do
   case ${opt} in
     h) PrintUsage;;
     p) download_prefix=${OPTARG};;
+    z) mktar=1;;
     \?) echo "\`\`${OPTARG}'' is an unknown option." 1>&2
       exit 1;;
     :) echo "\`\`${OPTARG}'' requires an argument." 1>&2
@@ -86,7 +95,7 @@ then
       -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
 fi
 
-if ! test -e ${download_prefix}
+if test ! -e ${download_prefix}
 then
   mkdir -p ${download_prefix}
 fi
