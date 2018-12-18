@@ -19,7 +19,7 @@ CreateTheFirstLayout()
   local download_prefix_1=${download_prefix}
   local index_page_1=${index_page}
   local chapters_1=$(${fetch} -o - ${index_page} 2>/dev/null | \
-sed -n -e "s/.\{1,\}<td>\
+sed -n -e "s/.\{1,\}<td.\{0,\}>\
 <a href=\"\(.\{1,\}\)\" title=\".\{1,\}\">.\{1,\}<\/a><\/td>.\{1,\}/\1/p")
   for chapter_1 in ${chapters_1}
   {
@@ -47,7 +47,7 @@ CreateTheSecondLayout()
   local download_prefix_2=${download_prefix}
   local index_page_2=${index_page}
   local chapters_2=$(${fetch} -o - ${index_page} 2>/dev/null | \
-sed -n -e "s/.\{1,\}<td>\
+sed -n -e "s/.\{1,\}<td.\{0,\}>\
 <a href=\"\(.\{1,\}\)\" title=\".\{1,\}\">.\{1,\}<\/a><\/td>.\{1,\}/\1/p")
   for chapter_2 in ${chapters_2}
   {
