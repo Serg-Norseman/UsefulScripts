@@ -1,5 +1,5 @@
 #! /bin/sh
-# Copyright (c) 2018, Ruslan Garipov.
+# Copyright (c) 2018-2019, Ruslan Garipov.
 # Contacts: <ruslanngaripov@gmail.com>.
 # License: MIT License (https://opensource.org/licenses/MIT).
 # Author: Ruslan Garipov <ruslanngaripov@gmail.com>.
@@ -38,12 +38,10 @@ elif test -n "${tag}"
 then
   if test 1 -lt ${#download_prefix}
   then
-    # We have to use extended (modern) regular expressions and not BRE, because
-    # we need branches, and BRE does not have it (``|'').
-    download_prefix=$(echo "${download_prefix}" | sed -n -E \
-        -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2\/${tag}/p")
+    download_prefix=$(echo "${download_prefix}" | sed -n \
+        -e "s/^\(.\{1,\}\)\([^\\/]\)\\/\{0,1\}\$/\1\2\/${tag}/p")
   else
-    if test "/" != ${download_prefix}
+    if test "/" != "${download_prefix}"
     then
       download_prefix=${download_prefix}/${tag}
     else
@@ -53,8 +51,8 @@ then
 fi
 if test 1 -lt ${#download_prefix}
 then
-  download_prefix=$(echo "${download_prefix}" | sed -n -E \
-      -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
+  download_prefix=$(echo "${download_prefix}" | sed -n \
+      -e "s/^\(.\{1,\}\)\([^\\/]\)\\/\{0,1\}$/\1\2/p")
 fi
 
 if test ! -e ${download_prefix}
