@@ -52,7 +52,7 @@ fi
 if test 1 -lt ${#download_prefix}
 then
   download_prefix=$(echo "${download_prefix}" | sed -n \
-      -e "s/^(.{1,})([^\/])\/{0,1}$/\1\2/p")
+      -e "s/^\(.\{1,\}\)\([^\/]\)\/\{0,1\}\$/\1\2/p")
 fi
 
 if test ! -e "${download_prefix}"
