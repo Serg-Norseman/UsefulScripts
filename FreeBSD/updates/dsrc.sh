@@ -6,7 +6,7 @@
 
 PrintUsage()
 {
-  echo "Usage: dsrc.sh [-p <store location>]"
+  echo "Usage: dsrc.sh [-p <store location>] [-s]"
   echo "               [-h]"
   exit 0;
 }
@@ -15,11 +15,13 @@ if test 0 -eq $#
 then
   PrintUsage
 fi
-while getopts ":hp:" opt
+no_dot_svn="--exclude .svn"
+while getopts ":hsp:" opt
 do
   case ${opt} in
     h) PrintUsage;;
     p) st_loc=${OPTARG};;
+    s) unset no_dot_svn;;
     \?) echo "\`\`${OPTARG}'' is an unknown option." 1>&2
       exit 1;;
     :) echo "\`\`${OPTARG}'' requires an argument." 1>&2
@@ -46,7 +48,7 @@ fi
 
 cur_dir=$(pwd)
 cd ${st_loc}
-tar -cvv --format pax -f usr.tar -C /usr --exclude .svn src
+tar -cvvf src.tar --format pax ${no_dot_svn} -C /usr src
 openssl sha256 src.tar > CHECKSUM.SHA256-src
 openssl sha512 src.tar > CHECKSUM.SHA512-src
 xz -zv -F xz -C sha256 -T 0 src.tar
