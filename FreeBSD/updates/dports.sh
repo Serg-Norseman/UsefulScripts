@@ -103,11 +103,11 @@ then
   cd ${st_loc}
   tar -cvvf ports.tar --format pax ${no_dot_svn} --exclude ports/distfiles \
 -C /usr ports
-  openssl sha256 ports.tar > CHECKSUM.SHA256-ports
-  openssl sha512 ports.tar > CHECKSUM.SHA512-ports
+  sha256 ports.tar > CHECKSUM.SHA256-ports
+  sha512 ports.tar > CHECKSUM.SHA512-ports
   xz -zvF xz -C sha256 -T 0 ports.tar
-  openssl sha256 ports.tar.xz >> CHECKSUM.SHA256-ports
-  openssl sha512 ports.tar.xz >> CHECKSUM.SHA512-ports
+  sha256 ports.tar.xz >> CHECKSUM.SHA256-ports
+  sha512 ports.tar.xz >> CHECKSUM.SHA512-ports
   cd ${cur_dir}
 else
   echo "svn toolset failed."

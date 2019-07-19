@@ -102,11 +102,11 @@ then
   cur_dir=$(pwd)
   cd ${st_loc}
   tar -cvvf src.tar --format pax ${no_dot_svn} -C /usr src
-  openssl sha256 src.tar > CHECKSUM.SHA256-src
-  openssl sha512 src.tar > CHECKSUM.SHA512-src
+  sha256 src.tar > CHECKSUM.SHA256-src
+  sha512 src.tar > CHECKSUM.SHA512-src
   xz -zvF xz -C sha256 -T 0 src.tar
-  openssl sha256 src.tar.xz >> CHECKSUM.SHA256-src
-  openssl sha512 src.tar.xz >> CHECKSUM.SHA512-src
+  sha256 src.tar.xz >> CHECKSUM.SHA256-src
+  sha512 src.tar.xz >> CHECKSUM.SHA512-src
   cd ${cur_dir}
 else
   echo "svn toolset failed."
