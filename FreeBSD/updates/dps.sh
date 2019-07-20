@@ -54,7 +54,7 @@ then
   st_loc=$(echo ${st_loc} | sed -n -e \
       "s/^\(.\{1,\}\)\([^\\/]\)\\/\{0,1\}\$/\1\2/p")
 fi
-st_loc=st_loc/"$(date -I)"
+st_loc="${st_loc}"/"$(date -I)"
 
 echo "Download the ports tree"
 ./dports.sh -p "${st_loc}" "${ports_svn}"
