@@ -30,7 +30,7 @@ then
   PrintUsage
 fi
 no_dot_svn="--exclude ports/.svn"
-while getopts ":hsp:" opt
+while getopts ":hp:s" opt
 do
   case ${opt} in
     h) PrintUsage;;
