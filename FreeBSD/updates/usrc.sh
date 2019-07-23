@@ -124,7 +124,7 @@ then
   echo " 	fi" >> ${tmp_patch}
   echo " fi" >> ${tmp_patch}
   echo "" >> ${tmp_patch}
-  echo "+# Specify Subversion's revision explicitly for a) my ``RG77'' kernel config," >> ${tmp_patch}
+  echo "+# Specify Subversion's revision explicitly for a) my \`\`RG77'' kernel config," >> ${tmp_patch}
   echo "+# and b) absence of the .svn meta-directory.  Actually, the latter is not a big" >> ${tmp_patch}
   echo "+# problem and I can bring it to this host, but lacking the svn toolset in the" >> ${tmp_patch}
   echo "+# kernel and/or installed subversion port I have to specify the revision of the" >> ${tmp_patch}
