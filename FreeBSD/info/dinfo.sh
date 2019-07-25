@@ -4,6 +4,34 @@
 # License: MIT License (https://opensource.org/licenses/MIT).
 # Author: Ruslan Garipov <ruslanngaripov@gmail.com>.
 
+# NAME
+# dinfo.sh - downloads books and articles from the FreeBSD Download site (from
+# its ``en'' part†) in PDF format.
+#
+# SYNOPSIS
+# dinfo.sh -p {target directory} [-z]
+# dinfo.sh -h
+#
+# DESCRIPTION
+# dinfo.sh downloads the English-language documentation from the FreeBSD
+# Download site into the ``target directory''.  If the caller has specified `-z`
+# option, this script creates tarball(s) for the downloaded directory(ies)
+# (inside the ``target directory'') and removes the original directory(ies).
+#
+# The following options are available:
+#
+# -p    Directory where downloaded content is stored.  The content is mirrored
+#       from the FreeBSD Download site.
+#
+# -z    Create packed tarballs and their checksums for each downloaded directory
+#       inside the ``target directory''.  A downloaded directory itself is
+#       removed.
+#
+# -h    Show script usage information.
+#
+# † The script downloads documentation it finds on this page:
+# https://download.FreeBSD.org/ftp/doc/en/.
+
 PrintUsage()
 {
   echo "Usage: dinfo.sh [-p <download location>] [-z]"
