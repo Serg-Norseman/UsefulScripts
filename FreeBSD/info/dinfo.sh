@@ -37,8 +37,31 @@ sed -n -e "s/.\{1,\}<td.\{0,\}>\
     then
       trbl=$(echo ${chapter_1} |\
           sed -n -e "s/^\(.\{1,\}\)\([^\\/]\)\\/\{0,1\}\$/\1\2/p")
-      tar -c --format pax -f - -C ${download_prefix_1} ${trbl} | xz -z -F xz \
-          -C sha256 > ${download_prefix_1}/${trbl}.tar.xz
+      (
+        cd ${download_prefix_1}
+        tar -cf ${trbl}.tar --format pax ${trbl}
+        if test -f /sbin/sha256
+        then
+          /sbin/sha256 ${trbl}.tar > CHECKSUM.SHA256-${trbl}
+          /sbin/sha512 ${trbl}.tar > CHECKSUM.SHA512-${trbl}
+        else
+          # This is for MSYS2 runtime's openssl package.  GNU coreutils'
+          # sha{256,512}sum print result incompatible with FreeBSD's
+          # sha{256,512}.
+          openssl sha256 ${trbl}.tar > CHECKSUM.SHA256-${trbl}
+          openssl sha512 ${trbl}.tar > CHECKSUM.SHA512-${trbl}
+        fi
+        xz -zF xz -C sha256 -T 0 ${trbl}.tar
+        if test -f /sbin/sha256
+        then
+          /sbin/sha256 ${trbl}.tar.xz >> CHECKSUM.SHA256-${trbl}
+          /sbin/sha512 ${trbl}.tar.xz >> CHECKSUM.SHA512-${trbl}
+        else
+          openssl sha256 ${trbl}.tar.xz >> CHECKSUM.SHA256-${trbl}
+          openssl sha512 ${trbl}.tar.xz >> CHECKSUM.SHA512-${trbl}
+        fi
+        rm -r ${trbl}
+      )
     fi
   }
 }
