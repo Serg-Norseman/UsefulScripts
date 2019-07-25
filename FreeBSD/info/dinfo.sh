@@ -11,7 +11,7 @@ PrintUsage()
   exit 0;
 }
 
-index_page=https://download.freebsd.org/ftp/doc/en/
+index_page=https://download.FreeBSD.org/ftp/doc/en/
 format=pdf
 
 CreateTheFirstLayout()
