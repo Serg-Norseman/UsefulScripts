@@ -9,7 +9,7 @@
 # and checksums.
 #
 # SYNOPSIS
-# usrc.sh -p sources -r {svn revision}
+# usrc.sh -p sources [-r {svn revision}]
 # usrc.sh -h
 #
 # DESCRIPTION
