@@ -120,7 +120,7 @@ then
   tmp_patch=$(mktemp -t newvers.sh.patch)
   echo "--- /usr/src/sys/conf/newvers.sh.orig 2019-07-11 17:36:40.465037000 +0500" > ${tmp_patch}
   echo "+++ /usr/src/sys/conf/newvers.sh  2019-07-11 17:42:01.823922000 +0500" >> ${tmp_patch}
-  echo "@@ -313,6 +313,13 @@" >> ${tmp_patch}
+  echo "@@ -317,6 +317,13 @@" >> ${tmp_patch}
   echo " 	fi" >> ${tmp_patch}
   echo " fi" >> ${tmp_patch}
   echo "" >> ${tmp_patch}
