@@ -104,3 +104,27 @@ echo "Clean /usr/ports remaining /usr/ports/distfiles in place."
 /root/rmports.sh
 printf "Untar %s into /usr.\n" "${src_dir}/ports.tar.xz"
 tar -xf "${src_dir}/ports.tar.xz" -C /usr
+# Patch /usr/ports/Mk/Scripts/do-fetch.sh file.  The latter was updated by
+# r507705 in order to fix bug 239293.  But r507705 missed -n in an `echo`.
+# While waiting for a new fix, apply patch here.
+echo "Patch /usr/ports/Mk/Scripts/do-fetch.sh."
+tmp_patch=$(mktemp -t do-fetch.sh.patch)
+echo "--- /usr/ports/Mk/Scripts/do-fetch.sh.orig	2019-08-04 18:55:11.394671000 +0500" > ${tmp_patch}
+echo "+++ /usr/ports/Mk/Scripts/do-fetch.sh	2019-08-06 11:21:52.993949000 +0500" >> ${tmp_patch}
+echo "@@ -128,7 +128,7 @@" >> ${tmp_patch}
+echo " 			*/*)" >> ${tmp_patch}
+echo " 				case \${dp_TARGET} in" >> ${tmp_patch}
+echo " 				fetch-list|fetch-url-list-int)" >> ${tmp_patch}
+echo "-					echo \"mkdir -p \\\"\${file%/*}\\\" && \"" >> ${tmp_patch}
+echo "+					echo -n \"mkdir -p \\\"\${file%/*}\\\" && \"" >> ${tmp_patch}
+echo " 					;;" >> ${tmp_patch}
+echo " 				*)" >> ${tmp_patch}
+echo " 					mkdir -p \"\${file%/*}\"" >> ${tmp_patch}
+patch -up0 --posix < ${tmp_patch}
+if test 0 -eq $?
+then
+  echo "Revert the patch using \`patch -Rup0 < ${tmp_patch}\`"
+else
+  echo "Patching failed"
+  exit 1
+fi
