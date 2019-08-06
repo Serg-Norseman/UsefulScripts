@@ -134,6 +134,12 @@ then
   echo ' [ ${include_metadata} = "if-modified" -a ${modified} = "yes" ] && include_metadata=yes' >> ${tmp_patch}
   echo ' if [ ${include_metadata} != "yes" ]; then' >> ${tmp_patch}
   echo ' 	VERINFO="${VERSION}${svn}${git}${hg} ${i}"' >> ${tmp_patch}
-  patch -up0 < ${tmp_patch} || (echo "Patching failed" && exit 1)
-  echo "Revert the patch using \`patch -Rup0 < ${tmp_patch}\`"
+  patch -up0 --posix < ${tmp_patch}
+  if test 0 -eq $?
+  then
+    echo "Revert the patch using \`patch -Rup0 < ${tmp_patch}\`"
+  else
+    echo "Patching failed"
+    exit 1
+  fi
 fi
