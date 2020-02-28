@@ -1,5 +1,5 @@
 #! /bin/sh
-# Copyright (c) 2019, Ruslan Garipov.
+# Copyright (c) 2019-2020, Ruslan Garipov.
 # Contacts: <ruslanngaripov@gmail.com>.
 # License: MIT License (https://opensource.org/licenses/MIT).
 # Author: Ruslan Garipov <ruslanngaripov@gmail.com>.
@@ -16,11 +16,11 @@
 # unpacked and packed tarball).  Because `-s` is specified this script adds the
 # .svn subdirectory into the tarball (otherwise it's ignored).
 #
-#   # ./dsrc.sh -p ~/freebsd-src -s
+#   # ./dsrc.sh -d ~/freebsd-src -s
 
 PrintUsage()
 {
-  echo "Usage: dsrc.sh [-p <store location>] [-s]"
+  echo "Usage: dsrc.sh [-d <store location>] [-s]"
   echo "               [-h]"
   exit 0;
 }
@@ -29,13 +29,13 @@ if test 0 -eq $#
 then
   PrintUsage
 fi
-no_dot_svn="--exclude src/.svn"
-while getopts ":hp:s" opt
+NO_DOT_SVN="--exclude src/.svn"
+while getopts ":hd:s" COMMAND_LINE_ARGUMENT
 do
-  case ${opt} in
+  case ${COMMAND_LINE_ARGUMENT} in
     h) PrintUsage;;
-    p) st_loc=${OPTARG};;
-    s) unset no_dot_svn;;
+    d) DESTDIR=${OPTARG%/};;
+    s) unset NO_DOT_SVN;;
     \?) echo "\`\`${OPTARG}'' is an unknown option." 1>&2
       exit 1;;
     :) echo "\`\`${OPTARG}'' requires an argument." 1>&2
@@ -43,41 +43,36 @@ do
   esac
 done
 
-if test -z "${st_loc}"
+if test -z "${DESTDIR}"
 then
-  echo "Please use \`\`-p'' option to specify store (target) location."
+  echo "Please use \`\`-d'' option to specify store (target) location."
   echo "'${0} -h' for more information."
   exit 1
 fi
-if test 1 -lt "${#st_loc}"
-then
-  st_loc=$(echo ${st_loc} | sed -n -e \
-      "s/^\(.\{1,\}\)\([^\\/]\)\\/\{0,1\}\$/\1\2/p")
-fi
 
 # Search svn or svnlite.
-for p in /usr/bin /usr/local/bin
+for P in /usr/bin /usr/local/bin
 do
-  for s in svn svnlite
+  for S in svn svnlite
   do
-    if test -f ${p}/${s}
+    if test -f ${P}/${S}
     then
-      svn_cmd=${p}/${s}
+      SVN_CMD=${P}/${S}
     fi
   done
 done
-for p in /usr/bin /usr/local/bin
+for P in /usr/bin /usr/local/bin
 do
-  for s in svnversion svnliteversion
+  for S in svnversion svnliteversion
   do
-    if test -f ${p}/${s}
+    if test -f ${P}/${S}
     then
-      svnversion_cmd=${p}/${s}
+      SVNVERSION_CMD=${P}/${S}
     fi
   done
 done
 
-if test -z "${svn_cmd}" -o -z "${svnversion_cmd}"
+if test -z "${SVN_CMD}" -o -z "${SVNVERSION_CMD}"
 then
   echo "Unable to find svn toolset."
   exit 1
@@ -86,28 +81,25 @@ fi
 # Update /usr/src.
 if test -d /usr/src/.svn
 then
-  ${svn_cmd} update /usr/src
+  ${SVN_CMD} update /usr/src
 else
-  ${svn_cmd} checkout https://svn.FreeBSD.org/base/head /usr/src
+  ${SVN_CMD} checkout https://svn.FreeBSD.org/base/head /usr/src
 fi
 
 if test 0 -eq $?
 then
-  st_loc="${st_loc}"/r$(${svnversion_cmd} /usr/src)
-  if test ! -d "${st_loc}"
-  then
-    mkdir -p ${st_loc}
-  fi
+  DESTDIR="${DESTDIR}"/r$(${SVNVERSION_CMD} /usr/src)
+  mkdir -p ${DESTDIR}
 
-  cur_dir=$(pwd)
-  cd ${st_loc}
-  tar -cvvf src.tar --format pax ${no_dot_svn} -C /usr src
+  CURRENTDIR=$(pwd)
+  cd ${DESTDIR}
+  tar -cvvf src.tar --format pax ${NO_DOT_SVN} -C /usr src
   sha256 src.tar > CHECKSUM.SHA256-src
   sha512 src.tar > CHECKSUM.SHA512-src
   xz -zvF xz -C sha256 -T 0 src.tar
   sha256 src.tar.xz >> CHECKSUM.SHA256-src
   sha512 src.tar.xz >> CHECKSUM.SHA512-src
-  cd ${cur_dir}
+  cd ${CURRENTDIR}
 else
   echo "svn toolset failed."
   exit 1

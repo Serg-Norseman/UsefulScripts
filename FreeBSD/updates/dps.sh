@@ -1,15 +1,15 @@
 #! /bin/sh
-# Copyright (c) 2019, Ruslan Garipov.
+# Copyright (c) 2019-2020, Ruslan Garipov.
 # Contacts: <ruslanngaripov@gmail.com>.
 # License: MIT License (https://opensource.org/licenses/MIT).
 # Author: Ruslan Garipov <ruslanngaripov@gmail.com>.
 
-# This script calls the dsrc.sh and dports.sh ones passing its parameters
-# through to those scripts.
+# This script calls dsrc.sh and dports.sh ones passing its parameters through to
+# those scripts.
 
 PrintUsage()
 {
-  echo "Usage: dps.sh [-p <store location>] [-s [p][s]]"
+  echo "Usage: dps.sh [-d <store location>] [-s [p][s]]"
   echo "              [-h]"
   exit 0;
 }
@@ -18,22 +18,22 @@ if test 0 -eq $#
 then
   PrintUsage
 fi
-while getopts ":hp:s:" opt
+while getopts ":hd:s:" COMMAND_LINE_ARGUMENT
 do
-  case ${opt} in
+  case ${COMMAND_LINE_ARGUMENT} in
     h) PrintUsage;;
-    p) st_loc=${OPTARG};;
+    d) DESTDIR=${OPTARG%/};;
     s)
       if test "s" = ${OPTARG}
       then
-        src_svn="-s"
+        SRC_SVN="-s"
       elif test "p" = ${OPTARG}
       then
-        ports_svn="-s"
+        PORTS_SVN="-s"
       elif test "ps" = ${OPTARG} -o "sp" = ${OPTARG}
       then
-        src_svn="-s"
-        ports_svn="-s"
+        SRC_SVN="-s"
+        PORTS_SVN="-s"
       fi
       ;;
     \?) echo "\`\`${OPTARG}'' is an unknown option." 1>&2
@@ -43,20 +43,15 @@ do
   esac
 done
 
-if test -z "${st_loc}"
+if test -z "${DESTDIR}"
 then
-  echo "Please use \`\`-p'' option to specify store (target) location."
+  echo "Please use \`\`-d'' option to specify destination location."
   echo "'${0} -h' for more information."
   exit 1
 fi
-if test 1 -lt "${#st_loc}"
-then
-  st_loc=$(echo ${st_loc} | sed -n -e \
-      "s/^\(.\{1,\}\)\([^\\/]\)\\/\{0,1\}\$/\1\2/p")
-fi
-st_loc="${st_loc}"/"$(date -I)"
+DESTDIR="${DESTDIR}"/"$(date -I)"
 
-echo "Download the ports tree"
-./dports.sh -p "${st_loc}" "${ports_svn}"
-echo "Download the source code"
-./dsrc.sh -p "${st_loc}" "${src_svn}"
+echo "Download the ports tree."
+. $(/bin/realpath "${0%/*}")/dports.sh -d "${DESTDIR}" "${PORTS_SVN}"
+echo "Download the source code."
+. $(/bin/realpath "${0%/*}")/dsrc.sh -d "${DESTDIR}" "${SRC_SVN}"
