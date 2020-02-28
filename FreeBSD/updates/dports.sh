@@ -88,11 +88,11 @@ fi
 
 if test 0 -eq $?
 then
-  DESTDIR="${DESTDIR}"/r$(${SVNVERSION_CMD} /usr/ports)
-  mkdir -p ${DESTDIR}
+  DESTDIR_LCL="${DESTDIR}"/r$(${SVNVERSION_CMD} /usr/ports)
+  mkdir -p ${DESTDIR_LCL}
 
   CURRENTDIR=$(pwd)
-  cd ${DESTDIR}
+  cd ${DESTDIR_LCL}
   tar -cvvf ports.tar --format pax ${NO_DOT_SVN} --exclude ports/distfiles \
       -C /usr ports
   sha256 ports.tar > CHECKSUM.SHA256-ports

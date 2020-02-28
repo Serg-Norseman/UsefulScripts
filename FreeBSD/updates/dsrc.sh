@@ -88,11 +88,11 @@ fi
 
 if test 0 -eq $?
 then
-  DESTDIR="${DESTDIR}"/r$(${SVNVERSION_CMD} /usr/src)
-  mkdir -p ${DESTDIR}
+  DESTDIR_LCL="${DESTDIR}"/r$(${SVNVERSION_CMD} /usr/src)
+  mkdir -p ${DESTDIR_LCL}
 
   CURRENTDIR=$(pwd)
-  cd ${DESTDIR}
+  cd ${DESTDIR_LCL}
   tar -cvvf src.tar --format pax ${NO_DOT_SVN} -C /usr src
   sha256 src.tar > CHECKSUM.SHA256-src
   sha512 src.tar > CHECKSUM.SHA512-src
