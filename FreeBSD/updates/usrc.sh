@@ -105,7 +105,7 @@ fi
 # The checksums are valid.  Clean the target (/usr/src) using the dedicated
 # script and untar the ${SOURCEDIR}/src.tar.xz.
 echo "Clean /usr/src remaining my kernel config in place."
-. $(/bin/realpath "${0%/*}")/rmsrc.sh
+$(/bin/realpath "${0%/*}")/rmsrc.sh
 if test ! 0 -eq $?
 then
   echo "Unable to clean /usr/src."

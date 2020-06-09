@@ -96,7 +96,7 @@ fi
 # The checksums are valid.  Clean the target (/usr/ports) using the dedicated
 # script and untar the ${SOURCEDIR}/ports.tar.xz.
 echo "Clean /usr/ports remaining /usr/ports/distfiles in place."
-. $(/bin/realpath "${0%/*}")/rmports.sh
+$(/bin/realpath "${0%/*}")/rmports.sh
 if test ! 0 -eq $?
 then
   echo "Unable to clean /usr/ports."
